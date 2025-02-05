@@ -31,6 +31,10 @@ const DonationCard = styled(motion.div)`
     color: ${({ theme }) => theme.colors.secondary};
     margin-bottom: 1rem;
   }
+
+  p {
+    margin-bottom: 1rem;
+  }
 `;
 
 const Amount = styled.div`

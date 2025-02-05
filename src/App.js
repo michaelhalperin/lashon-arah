@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  useParams,
 } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { AnimatePresence } from "framer-motion";
@@ -29,6 +30,17 @@ import { Distributions } from "./pages/subpages/Distributions";
 import { Partners } from "./pages/Partners";
 import { ContactUs } from "./pages/subpages/ContactUs";
 import { Terms } from "./pages/subpages/Terms";
+import { Shop } from "./shop/Shop";
+import { ItemDetail } from "./shop/ItemDetail";
+import { mockItems } from "./shop/mockData";
+import { CartProvider } from "./context/CartContext";
+import { Checkout } from "./shop/Checkout";
+
+const ItemDetailWrapper = () => {
+  const { id } = useParams();
+  const item = mockItems.find((item) => item.id === parseInt(id));
+  return <ItemDetail item={item} />;
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -50,8 +62,35 @@ const AnimatedRoutes = () => {
         <Route path="/partners" element={<Partners />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/:id" element={<ItemDetailWrapper />} />
+        <Route path="/shop/checkout" element={<Checkout />} />
       </Routes>
     </AnimatePresence>
+  );
+};
+
+const AppContent = () => {
+  const location = useLocation();
+
+  const shouldShowNewsletter = () => {
+    const hideNewsletterPaths = ["/terms", "/shop", "/shop/"];
+    return (
+      !hideNewsletterPaths.some((path) => location.pathname.startsWith(path)) &&
+      !/^\/shop\/\d+$/.test(location.pathname)
+    );
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <Header />
+      <AnimatedRoutes />
+      <ScrollToTop />
+      {shouldShowNewsletter() && <Newsletter />}
+      <Footer />
+      <AccessibilityWidget />
+    </ThemeProvider>
   );
 };
 
@@ -59,17 +98,11 @@ function App() {
   return (
     <ErrorBoundary>
       <AccessibilityProvider>
-        <Router>
-          <ThemeProvider theme={theme}>
-            <GlobalStyles />
-            <Header />
-            <AnimatedRoutes />
-            <ScrollToTop />
-            <Newsletter />
-            <Footer />
-            <AccessibilityWidget />
-          </ThemeProvider>
-        </Router>
+        <CartProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </CartProvider>
       </AccessibilityProvider>
     </ErrorBoundary>
   );

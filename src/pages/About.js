@@ -100,14 +100,14 @@ export const About = () => {
             <p>חינוך, הסברה ופעילות קהילתית</p>
             <HiArrowLeft className="icon" size={24} />
           </Card>
-          <Card
+          {/* <Card
             whileHover={{ y: -5 }}
             // onClick={() => handleNavigation("/about/vision")}
           >
             <h3>החזון שלנו</h3>
             <p>חברה מאוחדת ומכבדת</p>
             <HiArrowLeft className="icon" size={24} />
-          </Card>
+          </Card> */}
         </Grid>
       </Container>
     </AboutSection>
