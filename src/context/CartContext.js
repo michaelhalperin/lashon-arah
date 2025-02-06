@@ -4,7 +4,6 @@ const CartContext = createContext();
 const CART_STORAGE_KEY = "shopCart";
 
 export const CartProvider = ({ children }) => {
-  // Initialize state from localStorage if available
   const [cartItems, setCartItems] = useState(() => {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
@@ -15,7 +14,6 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // Save to localStorage whenever cart changes
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
@@ -29,13 +27,11 @@ export const CartProvider = ({ children }) => {
       const existingItem = prevItems.find((i) => i.id === item.id);
 
       if (existingItem) {
-        // Update quantity if item exists
         return prevItems.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
         );
       }
 
-      // Add new item if it doesn't exist
       return [...prevItems, { ...item, quantity }];
     });
   };

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { HiHome, HiUser, HiShoppingCart } from "react-icons/hi";
+import { HiHome, HiUser, HiShoppingCart, HiMenu, HiX } from "react-icons/hi";
 import { CartSidebar } from "../../shop/CartSidebar";
 import { useCart } from "../../context/CartContext";
 
@@ -37,6 +37,25 @@ const NavLinks = styled.div`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: ${({ scrolled }) => (scrolled ? "60px" : "75px")};
+    left: 0;
+    right: 0;
+    transform: none;
+    flex-direction: column;
+    gap: 0;
+    background: white;
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
+    visibility: ${({ isMenuOpen }) => (isMenuOpen ? "visible" : "hidden")};
+    transform-origin: top;
+    transform: ${({ isMenuOpen }) => isMenuOpen ? 'scaleY(1)' : 'scaleY(0)'};
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 `;
 
 const NavLink = styled(motion(Link))`
@@ -47,25 +66,43 @@ const NavLink = styled(motion(Link))`
   padding: 0.5rem 0;
   text-decoration: none;
 
-  &:after {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    right: 0;
-    background: ${({ theme }) => theme.colors.red};
-    transition: width 0.3s ease;
-  }
-
-  &:hover:after {
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
     width: 100%;
-  }
+    text-align: center;
+    padding: 1.2rem;
+    margin: 0.2rem 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
+    transform: ${({ isMenuOpen }) =>
+      isMenuOpen ? "translateY(0)" : "translateY(-20px)"};
+    transition-delay: ${({ index }) => `${0.1 + index * 0.1}s`};
 
-  &.active {
-    color: ${({ theme }) => theme.colors.red};
     &:after {
-      width: 100%;
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
+      background: ${({ theme }) => theme.colors.red};
+      transition: width 0.3s ease;
+    }
+
+    &:hover {
+      color: ${({ theme }) => theme.colors.red};
+      &:after {
+        width: 40px;
+      }
+    }
+
+    &.active {
+      color: ${({ theme }) => theme.colors.red};
+      font-weight: 600;
+      &:after {
+        width: 40px;
+      }
     }
   }
 `;
@@ -174,22 +211,31 @@ const ShopNavLink = styled(NavLink)`
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
 
-  &:after {
-    display: none;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
-    background: ${({ theme }) => `${theme.colors.red}ee`};
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
   @media (max-width: 768px) {
-    padding: 0.4rem 1.2rem !important;
+    margin: 1rem auto;
+    width: 80%;
+    text-align: center;
+    background: ${({ theme }) => theme.colors.red};
+    color: white !important;
+    font-weight: 600;
+    border-radius: 30px;
+    padding: 1rem !important;
+    transition-delay: 0.4s;
+
+    &:hover {
+      transform: translateY(-2px);
+      background: ${({ theme }) => theme.colors.red};
+      &:after {
+        display: none;
+      }
+    }
+  }
+`;
+
+const MobileMenuButton = styled(IconButton)`
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
   }
 `;
 
@@ -200,6 +246,7 @@ export const Navigation = () => {
   const { getCartCount } = useCart();
   const cartCount = getCartCount();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isShopPage = location.pathname.startsWith("/shop");
 
@@ -212,6 +259,25 @@ export const Navigation = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const navLinks = document.getElementById("nav-links");
+      const menuButton = document.getElementById("mobile-menu-button");
+
+      if (
+        isMenuOpen &&
+        navLinks &&
+        !navLinks.contains(event.target) &&
+        !menuButton.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
 
   const linkVariants = {
     hover: {
@@ -234,6 +300,7 @@ export const Navigation = () => {
 
   const handleNavigation = (path) => {
     navigate(path);
+    setIsMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -282,74 +349,101 @@ export const Navigation = () => {
               </IconButton>
             </ShopNavLinks>
           ) : (
-            <NavLinks>
-              <NavLink
-                to="/about"
-                variants={linkVariants}
-                whileHover="hover"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/about");
-                }}
+            <>
+              <MobileMenuButton
+                id="mobile-menu-button"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                אודות
-              </NavLink>
-              <NavLink
-                to="/activities"
-                variants={linkVariants}
-                whileHover="hover"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/activities");
-                }}
+                {isMenuOpen ? <HiX /> : <HiMenu />}
+              </MobileMenuButton>
+
+              <NavLinks
+                id="nav-links"
+                isMenuOpen={isMenuOpen}
+                scrolled={scrolled}
               >
-                הפעילות שלנו
-              </NavLink>
-              <NavLink
-                to="/partners"
-                variants={linkVariants}
-                whileHover="hover"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/partners");
-                }}
-              >
-                הצטרפו אלינו
-              </NavLink>
-              <NavLink
-                to="/donate"
-                variants={linkVariants}
-                whileHover="hover"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/donate");
-                }}
-              >
-                תרומה
-              </NavLink>
-              <NavLink
-                to="/contact"
-                variants={linkVariants}
-                whileHover="hover"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/contact");
-                }}
-              >
-                צרו קשר
-              </NavLink>
-              <ShopNavLink
-                to="/shop"
-                variants={linkVariants}
-                whileHover="hover"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/shop");
-                }}
-              >
-                חנות
-              </ShopNavLink>
-            </NavLinks>
+                <NavLink
+                  to="/about"
+                  variants={linkVariants}
+                  whileHover="hover"
+                  isMenuOpen={isMenuOpen}
+                  index={0}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation("/about");
+                  }}
+                >
+                  אודות
+                </NavLink>
+                <NavLink
+                  to="/activities"
+                  variants={linkVariants}
+                  whileHover="hover"
+                  isMenuOpen={isMenuOpen}
+                  index={1}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation("/activities");
+                  }}
+                >
+                  הפעילות שלנו
+                </NavLink>
+                <NavLink
+                  to="/partners"
+                  variants={linkVariants}
+                  whileHover="hover"
+                  isMenuOpen={isMenuOpen}
+                  index={2}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation("/partners");
+                  }}
+                >
+                  הצטרפו אלינו
+                </NavLink>
+                <NavLink
+                  to="/donate"
+                  variants={linkVariants}
+                  whileHover="hover"
+                  isMenuOpen={isMenuOpen}
+                  index={3}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation("/donate");
+                  }}
+                >
+                  תרומה
+                </NavLink>
+                <NavLink
+                  to="/contact"
+                  variants={linkVariants}
+                  whileHover="hover"
+                  isMenuOpen={isMenuOpen}
+                  index={4}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation("/contact");
+                  }}
+                >
+                  צרו קשר
+                </NavLink>
+                <ShopNavLink
+                  to="/shop"
+                  variants={linkVariants}
+                  whileHover="hover"
+                  isMenuOpen={isMenuOpen}
+                  index={5}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation("/shop");
+                  }}
+                >
+                  חנות
+                </ShopNavLink>
+              </NavLinks>
+            </>
           )}
         </NavContainer>
       </Nav>
