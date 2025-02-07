@@ -9,6 +9,10 @@ const Widget = styled(motion.div)`
   left: 2rem;
   bottom: 2rem;
   z-index: 1000;
+  @media (max-width: 768px) {
+    left: 1rem;
+    bottom: 1rem;
+  }
 `;
 
 const ToggleButton = styled(motion.button)`

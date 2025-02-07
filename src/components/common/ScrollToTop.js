@@ -19,6 +19,10 @@ const ScrollButton = styled(motion.button)`
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  @media (max-width: 768px) {
+    bottom: 1rem;
+    right: 1rem;
+  }
 `;
 
 export const ScrollToTop = () => {

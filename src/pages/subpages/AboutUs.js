@@ -208,6 +208,42 @@ const CardTitle = styled.h4`
   margin: 0;
 `;
 
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  
+  @media (min-width: 1200px) {
+    cursor: default;
+  }
+
+  h3 {
+    margin: 0;
+  }
+`;
+
+const CollapseIcon = styled(motion.span)`
+  display: none;
+  font-size: 1.5rem;
+  color: ${({ theme }) => theme.colors.red};
+  
+  @media (max-width: 1200px) {
+    display: block;
+  }
+`;
+
+const SectionContent = styled(motion.div)`
+  @media (max-width: 1200px) {
+    overflow: hidden;
+  }
+
+  @media (min-width: 1201px) {
+    height: auto !important;
+    opacity: 1 !important;
+  }
+`;
+
 const topicsContent = {
   what: {
     title: "המשימה שלנו",
@@ -272,7 +308,6 @@ const topicsContent = {
         <StyledHighlight>לשון הרע לא מדבר אלי</StyledHighlight> בפרס ירושלים
         היוקרתי וזאת רק ההתחלה.
       </>,
-      <StyledLink>הצטרפו גם אתם, יחד אנחנו יכולים להשפיע.</StyledLink>,
     ],
     speak: {
       title: "דבר המייסד",
@@ -477,24 +512,6 @@ const topicsContent = {
       ],
     },
   },
-  //   how: {
-  //     title: "הדרך שלנו",
-  //     content: [
-  //       "אנחנו פועלים במספר מישורים מרכזיים:",
-  //       "חינוך - תכניות חינוכיות בבתי ספר ומוסדות חינוך",
-  //       "הסברה - הרצאות וסדנאות לקהל הרחב",
-  //       "פעילות קהילתית - יצירת מפגשים ואירועים המחברים בין קהילות שונות",
-  //     ],
-  //   },
-  //   vision: {
-  //     title: "החזון שלנו",
-  //     content: [
-  //       "אנו שואפים ליצור חברה ישראלית מאוחדת ומכבדת, בה:",
-  //       "כל אדם מרגיש שייך ומוערך",
-  //       "קיים דיאלוג פתוח ומכבד בין כל חלקי החברה",
-  //       "הגיוון והשוני נתפסים כמקור עוצמה ולא כמכשול",
-  //     ],
-  //   },
 };
 
 const linkCards = [
@@ -523,6 +540,12 @@ const linkCards = [
 export const AboutUs = () => {
   const topic = topicsContent.what;
   const [activeSection, setActiveSection] = useState("main");
+  const [expandedSections, setExpandedSections] = useState({
+    main: false,
+    speak: false,
+    explain: false,
+    toDo: false
+  });
 
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -555,6 +578,40 @@ export const AboutUs = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1200) {
+        setExpandedSections({
+          main: true,
+          speak: true,
+          explain: true,
+          toDo: true
+        });
+      } else {
+        setExpandedSections({
+          main: false,
+          speak: false,
+          explain: false,
+          toDo: false
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial check
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSection = (sectionId) => {
+    if (window.innerWidth <= 1200) {
+      setExpandedSections(prev => ({
+        ...prev,
+        [sectionId]: !prev[sectionId]
+      }));
+    }
+  };
+
   return (
     <InsiderSection>
       <Container>
@@ -568,90 +625,106 @@ export const AboutUs = () => {
           </motion.h1>
         </PageHeader>
 
-        <Content
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            id="main"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <motion.h3>{topic.title}</motion.h3>
-            {topic.content.map((paragraph, index) => (
-              <motion.p
-                key={`main-${index}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + 0.2 * index }}
+        <Content>
+          <motion.div id="main">
+            <SectionHeader onClick={() => toggleSection("main")}>
+              <motion.h3>{topic.title}</motion.h3>
+              <CollapseIcon
+                animate={{ rotate: expandedSections.main ? 180 : 0 }}
               >
-                {paragraph}
-              </motion.p>
-            ))}
-          </motion.div>
-
-          {topic.speak && (
-            <motion.div
-              id="speak"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+                ▼
+              </CollapseIcon>
+            </SectionHeader>
+            <SectionContent
+              animate={{
+                height: expandedSections.main ? "auto" : 0,
+                opacity: expandedSections.main ? 1 : 0
+              }}
+              transition={{ duration: 0.3 }}
             >
-              <motion.h3>{topic.speak.title}</motion.h3>
-              {topic.speak.content.map((paragraph, index) => (
-                <motion.p
-                  key={`speak-${index}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + 0.2 * index }}
-                >
+              {topic.content.map((paragraph, index) => (
+                <motion.p key={`main-${index}`}>
                   {paragraph}
                 </motion.p>
               ))}
+            </SectionContent>
+          </motion.div>
+
+          {topic.speak && (
+            <motion.div id="speak">
+              <SectionHeader onClick={() => toggleSection("speak")}>
+                <motion.h3>{topic.speak.title}</motion.h3>
+                <CollapseIcon
+                  animate={{ rotate: expandedSections.speak ? 180 : 0 }}
+                >
+                  ▼
+                </CollapseIcon>
+              </SectionHeader>
+              <SectionContent
+                animate={{
+                  height: expandedSections.speak ? "auto" : 0,
+                  opacity: expandedSections.speak ? 1 : 0
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                {topic.speak.content.map((paragraph, index) => (
+                  <motion.p key={`speak-${index}`}>
+                    {paragraph}
+                  </motion.p>
+                ))}
+              </SectionContent>
             </motion.div>
           )}
 
           {topic.explain && (
-            <motion.div
-              id="explain"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <motion.h3>{topic.explain.title}</motion.h3>
-              {topic.explain.content.map((paragraph, index) => (
-                <motion.p
-                  key={`explain-${index}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + 0.2 * index }}
+            <motion.div id="explain">
+              <SectionHeader onClick={() => toggleSection("explain")}>
+                <motion.h3>{topic.explain.title}</motion.h3>
+                <CollapseIcon
+                  animate={{ rotate: expandedSections.explain ? 180 : 0 }}
                 >
-                  {paragraph}
-                </motion.p>
-              ))}
+                  ▼
+                </CollapseIcon>
+              </SectionHeader>
+              <SectionContent
+                animate={{
+                  height: expandedSections.explain ? "auto" : 0,
+                  opacity: expandedSections.explain ? 1 : 0
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                {topic.explain.content.map((paragraph, index) => (
+                  <motion.p key={`explain-${index}`}>
+                    {paragraph}
+                  </motion.p>
+                ))}
+              </SectionContent>
             </motion.div>
           )}
 
           {topic.toDo && (
-            <motion.div
-              id="toDo"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <motion.h3>{topic.toDo.title}</motion.h3>
-              {topic.toDo.content.map((paragraph, index) => (
-                <motion.p
-                  key={`todo-${index}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + 0.2 * index }}
+            <motion.div id="toDo">
+              <SectionHeader onClick={() => toggleSection("toDo")}>
+                <motion.h3>{topic.toDo.title}</motion.h3>
+                <CollapseIcon
+                  animate={{ rotate: expandedSections.toDo ? 180 : 0 }}
                 >
-                  {paragraph}
-                </motion.p>
-              ))}
+                  ▼
+                </CollapseIcon>
+              </SectionHeader>
+              <SectionContent
+                animate={{
+                  height: expandedSections.toDo ? "auto" : 0,
+                  opacity: expandedSections.toDo ? 1 : 0
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                {topic.toDo.content.map((paragraph, index) => (
+                  <motion.p key={`todo-${index}`}>
+                    {paragraph}
+                  </motion.p>
+                ))}
+              </SectionContent>
             </motion.div>
           )}
         </Content>

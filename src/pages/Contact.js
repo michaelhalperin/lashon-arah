@@ -20,9 +20,10 @@ const ContactInfo = styled.div`
   flex-wrap: wrap;
   padding: 2rem;
 
-  @media (max-width: 768px) {
+  @media (min-width: 768px) {
     flex-direction: column;
     align-items: center;
+    width: 100px;
   }
 `;
 
@@ -94,6 +95,9 @@ const ContentWrapper = styled.div`
     font-size: 1.3rem;
     color: ${({ theme }) => theme.colors.text.primary};
     font-weight: 600;
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
   }
 `;
 
@@ -158,9 +162,9 @@ export const Contact = () => {
       <Container>
         <PageHeader>
           <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
             צרו קשר
           </motion.h2>
@@ -207,34 +211,34 @@ export const Contact = () => {
       {showNotification && (
         <CopyNotification
           initial={{ opacity: 0, x: 100, scale: 0.8 }}
-          animate={{ 
-            opacity: 1, 
-            x: 0, 
+          animate={{
+            opacity: 1,
+            x: 0,
             scale: 1,
             transition: {
               type: "spring",
               stiffness: 200,
-              damping: 20
-            }
+              damping: 20,
+            },
           }}
-          exit={{ 
+          exit={{
             opacity: 0,
             x: 100,
             scale: 0.8,
             transition: {
-              duration: 0.3
-            }
+              duration: 0.3,
+            },
           }}
         >
           <motion.span
             initial={{ scale: 0 }}
-            animate={{ 
+            animate={{
               scale: 1,
               transition: {
                 delay: 0.1,
                 type: "spring",
-                stiffness: 300
-              }
+                stiffness: 300,
+              },
             }}
           >
             ✓
