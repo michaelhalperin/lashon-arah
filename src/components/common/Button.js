@@ -8,6 +8,10 @@ export const Button = styled(motion.button)`
   font-size: ${({ theme }) => theme.typography.fontSize.base};
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 
   ${({ variant = "primary" }) => {
     switch (variant) {
@@ -32,4 +36,9 @@ export const Button = styled(motion.button)`
         return "";
     }
   }}
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+  }
 `;

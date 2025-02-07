@@ -151,7 +151,7 @@ export const Newsletter = () => {
         <Form onSubmit={handleSubmit}>
           <Input
             type="email"
-            placeholder="הזינו את כתובת המייל שלכם"
+            placeholder="הזינו את כתובת המייל"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

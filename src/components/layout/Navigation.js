@@ -53,7 +53,7 @@ const NavLinks = styled.div`
     opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
     visibility: ${({ isMenuOpen }) => (isMenuOpen ? "visible" : "hidden")};
     transform-origin: top;
-    transform: ${({ isMenuOpen }) => isMenuOpen ? 'scaleY(1)' : 'scaleY(0)'};
+    transform: ${({ isMenuOpen }) => (isMenuOpen ? "scaleY(1)" : "scaleY(0)")};
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 `;
@@ -79,7 +79,7 @@ const NavLink = styled(motion(Link))`
     transition-delay: ${({ index }) => `${0.1 + index * 0.1}s`};
 
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: 0;
       left: 50%;
@@ -262,6 +262,8 @@ export const Navigation = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      if (event.type !== 'mousedown') return;
+      
       const navLinks = document.getElementById("nav-links");
       const menuButton = document.getElementById("mobile-menu-button");
 
@@ -299,9 +301,9 @@ export const Navigation = () => {
   };
 
   const handleNavigation = (path) => {
-    navigate(path);
+    window.scrollTo(0, 0);
     setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate(path);
   };
 
   return (
