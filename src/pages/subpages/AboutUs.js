@@ -587,13 +587,6 @@ export const AboutUs = () => {
           explain: true,
           toDo: true
         });
-      } else {
-        setExpandedSections({
-          main: false,
-          speak: false,
-          explain: false,
-          toDo: false
-        });
       }
     };
 

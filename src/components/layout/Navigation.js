@@ -262,8 +262,6 @@ export const Navigation = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (event.type !== 'mousedown') return;
-      
       const navLinks = document.getElementById("nav-links");
       const menuButton = document.getElementById("mobile-menu-button");
 
