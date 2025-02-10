@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "../components/common/Button";
 
 const DonateSection = styled.section`
-  padding: 6rem 2rem;
+  padding: 4rem 2rem;
   color: white;
 `;
 
@@ -54,15 +54,6 @@ export const Donate = () => {
   return (
     <DonateSection>
       <Container>
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          תרמו למיזם
-        </motion.h2>
-        <p>עזרו לנו להמשיך בפעילות החשובה</p>
-
         <DonationOptions>
           {donationOptions.map((option, index) => (
             <DonationCard

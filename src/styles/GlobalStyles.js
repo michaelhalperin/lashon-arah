@@ -17,6 +17,23 @@ export const GlobalStyles = createGlobalStyle`
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    &.high-contrast {
+      background-color: #000 !important;
+      color: #fff !important;
+
+      * {
+        background-color: #000 !important;
+        color: #fff !important;
+        border-color: #fff !important;
+      }
+
+      a, button {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
   }
 
   a {

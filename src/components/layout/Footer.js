@@ -100,7 +100,7 @@ const QuickLink = styled(motion.a)`
   display: block;
   color: ${({ theme }) => theme.colors.text.light};
   text-decoration: none;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
   transition: all 0.3s ease;
   position: relative;
 
@@ -121,12 +121,42 @@ const QuickLink = styled(motion.a)`
   }
 `;
 
+const ActionQuickLink = styled(QuickLink)`
+  display: inline-block;
+  border: 2px solid ${({ theme }) => theme.colors.text.light};
+  color: ${({ theme }) => theme.colors.text.light} !important;
+  padding: 0.7rem 1.8rem;
+  margin-top: 1.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:before {
+    display: none;
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.text.light};
+    color: ${({ theme }) => theme.colors.red} !important;
+    transform: translateY(-2px);
+    padding-right: 1.8rem;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
 const Copyright = styled.div`
   text-align: center;
-  padding-top: 3rem;
-  margin-top: 3rem;
+  padding-top: 2rem;
+  // margin-top: 3rem;
   font-size: 0.9rem;
   opacity: 0.8;
+
+  @media (max-width: 768px) {
+    padding-bottom: 2rem;
+  }
 `;
 
 const QuickLinksContainer = styled.div`
@@ -164,21 +194,21 @@ export const Footer = () => {
           </ContactItem>
           <SocialLinks>
             <SocialLink
-              href="https://instagram.com"
+              href="https://www.instagram.com/lashonhara/"
               target="_blank"
               whileHover={{ scale: 1.1 }}
             >
               <FaInstagram />
             </SocialLink>
             <SocialLink
-              href="https://facebook.com"
+              href="https://www.facebook.com/Lashon.Hara.Lo.Medaber.Elai/"
               target="_blank"
               whileHover={{ scale: 1.1 }}
             >
               <FaFacebookF />
             </SocialLink>
             <SocialLink
-              href="https://youtube.com"
+              href="https://www.youtube.com/channel/UCdSaUtZ9dRCjV-VYCjpmN5w"
               target="_blank"
               whileHover={{ scale: 1.1 }}
             >
@@ -216,7 +246,7 @@ export const Footer = () => {
             הצטרפו למאבק נגד אלימות ברשת ובחיים האמיתיים. יחד נבנה חברה סובלנית
             ומכבדת יותר.
           </p>
-          <QuickLink href="/partners">להצטרפות</QuickLink>
+          <ActionQuickLink href="/partners">להצטרפות</ActionQuickLink>
         </FooterSection>
       </FooterContent>
 

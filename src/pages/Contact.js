@@ -4,7 +4,7 @@ import { FaPhone, FaEnvelope, FaCopy } from "react-icons/fa";
 import { useState } from "react";
 
 const ContactSection = styled.section`
-  padding: 6rem 2rem;
+  padding: 4rem 2rem;
   background: ${({ theme }) => theme.colors.background.secondary};
 `;
 
@@ -21,9 +21,9 @@ const ContactInfo = styled.div`
   padding: 2rem;
 
   @media (min-width: 768px) {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    width: 100px;
+    width: 100%;
   }
 `;
 

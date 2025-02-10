@@ -1,23 +1,28 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUniversalAccess, FaFont, FaAdjust } from 'react-icons/fa';
+import { FaUniversalAccess, FaFont, FaAdjust, FaUndo } from 'react-icons/fa';
 import { useAccessibility } from '../../context/AccessibilityContext';
 
 const Widget = styled(motion.div)`
   position: fixed;
-  left: 2rem;
-  bottom: 2rem;
+  left: 32px;
+  bottom: 32px;
   z-index: 1000;
+  font-size: 16px !important;
+  * {
+    font-size: 16px !important;
+  }
+  
   @media (max-width: 768px) {
-    left: 1rem;
-    bottom: 1rem;
+    left: 16px;
+    bottom: 16px;
   }
 `;
 
 const ToggleButton = styled(motion.button)`
-  width: 3rem;
-  height: 3rem;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: ${({ theme }) => theme.colors.primary};
   color: white;
@@ -26,7 +31,11 @@ const ToggleButton = styled(motion.button)`
   justify-content: center;
   border: none;
   cursor: pointer;
-  font-size: 1.5rem;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const Menu = styled(motion.div)`
@@ -35,12 +44,38 @@ const Menu = styled(motion.div)`
   left: 0;
   background: white;
   border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 16px;
+  margin-bottom: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
+  min-width: 200px;
+`;
+
+const MenuButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: ${({ theme }) => theme.colors.background.primary};
+  color: ${({ theme }) => theme.colors.text.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  height: 40px;
+  
+  &:hover {
+    background: ${({ theme }) => theme.colors.background.secondary};
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
 `;
 
 export const AccessibilityWidget = () => {
@@ -48,7 +83,8 @@ export const AccessibilityWidget = () => {
   const { 
     increaseFontSize, 
     decreaseFontSize, 
-    toggleHighContrast 
+    toggleHighContrast,
+    resetSettings
   } = useAccessibility();
 
   return (
@@ -69,15 +105,18 @@ export const AccessibilityWidget = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
           >
-            <button onClick={increaseFontSize} aria-label="הגדל גופן">
+            <MenuButton onClick={increaseFontSize} aria-label="הגדל גופן">
               <FaFont /> הגדל גופן
-            </button>
-            <button onClick={decreaseFontSize} aria-label="הקטן גופן">
+            </MenuButton>
+            <MenuButton onClick={decreaseFontSize} aria-label="הקטן גופן">
               <FaFont /> הקטן גופן
-            </button>
-            <button onClick={toggleHighContrast} aria-label="ניגודיות גבוהה">
+            </MenuButton>
+            <MenuButton onClick={toggleHighContrast} aria-label="ניגודיות גבוהה">
               <FaAdjust /> ניגודיות גבוהה
-            </button>
+            </MenuButton>
+            <MenuButton onClick={resetSettings} aria-label="איפוס הגדרות">
+              <FaUndo /> איפוס הגדרות
+            </MenuButton>
           </Menu>
         )}
       </AnimatePresence>
